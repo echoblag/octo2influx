@@ -9,9 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Extract short commit hash
-        id: vars
         run: echo "COMMIT_HASH=$(git rev-parse --short=7 HEAD)" >> $GITHUB_ENV
 
       - uses: actions/checkout@v3
       - name: Build docker image
-        run: docker buildx build --file ./src/Dockerfile --platform linux/amd64 --tag ghcr.io/echoblag/octo2influx:${{ env.COMMIT_HASH }} .src
+        run: docker buildx build --file ./src/Dockerfile --platform linux/amd64 --tag ghcr.io/echoblag/octo2influx:${{ env.COMMIT_HASH }} ./src
