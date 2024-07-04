@@ -1,4 +1,4 @@
-FROM python:3.10-slim-bookworm
+FROM python:3.10.14-slim-bookworm
 
 LABEL maintainer="Thibault Godouet <yo8192@users.noreply.github.com>"
 
@@ -11,6 +11,8 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY octo2influx.py loop.sh ./
+
+RUN chown 9923:9923 /usr/src/app/*
 
 USER octo2influx
 
