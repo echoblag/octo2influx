@@ -12,6 +12,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY octo2influx.py loop.sh ./
 
+RUN chown 9923:9923 /usr/src/app/*
+
 USER octo2influx
 
 ENV FREQ=1h
