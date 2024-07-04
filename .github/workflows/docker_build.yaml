@@ -1,0 +1,20 @@
+name: Python Docker Build
+on:
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract short commit hash
+        run: echo "SHORT_HASH=$(git rev-parse --short=7 HEAD)" >> $GITHUB_ENV
+
+      - name: Build docker image
+        env:
+          SHORT_HASH: ${{ env.SHORT_HASH }}
+        run: docker buildx build --file ./src/Dockerfile --platform linux/amd64 --tag ghcr.io/echoblag/octo2influx:${SHORT_HASH} ./src
