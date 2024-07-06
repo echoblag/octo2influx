@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>octo2influx-unraid</Name>
+  <Repository>ghcr.io/echoblag/octo2influx:latest</Repository>
+  <Registry>https://github.com/echoblag/octo2influx/pkgs/container/octo2influx</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Support/>
+  <Project/>
+  <Overview>A fork of https://github.com/yo8192/octo2influx used to scrape Octopus energy API telemetry, store it in InfluxDB and rendered in Grafana.</Overview>
+  <Category/>
+  <WebUI/>
+  <TemplateURL/>
+  <Icon>https://static.octopuscdn.com/favicons/apple-touch-icon.png?v=20210127</Icon>
+  <ExtraParams>--restart=unless-stopped</ExtraParams>
+  <PostArgs/>
+  <CPUset/>
+  <DateInstalled>1720269747</DateInstalled>
+  <DonateText/>
+  <DonateLink/>
+  <Requires/>
+  <Config Name="FREQ" Target="FREQ" Default="1h" Mode="" Description="The API scrape frequency." Type="Variable" Display="always" Required="false" Mask="false">1h</Config>
+  <Config Name="Config" Target="/etc/octo2influx/" Default="" Mode="rw" Description="" Type="Path" Display="always" Required="false" Mask="false">/mnt/user/appdata/octo2influx</Config>
+</Container>
