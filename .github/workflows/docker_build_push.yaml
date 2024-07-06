@@ -25,7 +25,7 @@ jobs:
         run: echo "COMMIT_HASH=$(git rev-parse --short=7 HEAD)" >> $GITHUB_ENV
 
       - name: Push Docker image
-        run: docker buildx build --file ./src/Dockerfile --platform linux/amd64 --push --tag ghcr.io/echoblag/octo2influx:${{ env.COMMIT_HASH }} ./src
+        run: docker buildx build --file ./src/Dockerfile --platform linux/amd64 --push --tag ghcr.io/echoblag/octo2influx:${{ env.COMMIT_HASH }} --tag ghcr.io/echoblag/octo2influx:latest ./src
 
 
 

@@ -1,41 +1,60 @@
-[//]: # (google-site-verification: bgTzhEZsRR1dfKKZZBBYCEAkwWiVAmkYZE4SKUYvx-I)  
-# octo2influx
+# octo2influx - Fork
+This is my fork of [yo8192's octo2influx](https://github.com/yo8192/octo2influx) project.
 
-Download your Octopus Energy usage, import and export (if you have solar panels) tariff data into your [InfluxDB](https://www.influxdata.com/products/influxdb-overview/) v2 database, and display in [Grafana](https://grafana.com/).
+My reasons for forking the project are:
+- I use Unraid as my Docker environment, which has its own peculiarities and does not run docker-compose natively.
+- I like versioning images and making them available for distribution.
+- It gives me another reason to play with GitHub actions.
 
-## Referral
+The octo2influx tool enables users to download their Octopus Energy usage, including import and export data.
+The latter is for solar equipped properties that export energy back to the grid.
 
-If you are interested in this and would like to join Octopus, why not use my [referral link](https://share.octopus.energy/amber-birch-257)? This will give you and me [£50 each](https://octopus.energy/help-and-faqs/articles/i-have-a-question-about-octopus-pound50-referrals/).
+[InfluxDB](https://www.influxdata.com/products/influxdb-overview/) v2 database and display in [Grafana](https://grafana.com/).
 
 ## About
+octo2influx retrieves energy usage data and the tariffs using the [Octopus API](https://developer.octopus.energy/docs/api/).
 
-octo2influx retrieves your usage data and the tariffs you configure from the [Octopus API](https://developer.octopus.energy/docs/api/). This can then be displayed with the advanced Grafana dashboard: ![screenshot of the Grafana dashboard](images/grafana-dashboard-overview.png)
+The tool calculates the cost based on the tariff. You can switch between tariffs to compare costs.
+>Additional tariffs need to be configured to compare prices.
 
-It automatically calculates the cost based on the tariff, and you can switch between tariffs to compare costs. For instance, switching to the 'Agile' tariff on the same time period of the dashboard above gives us a different cost: ![screenshot of the electricty cost with a different tariff](images/grafana-example-agile.png)
+In my case, I have only configured the current active tariff and will add more as needed or when I change to a new one.
 
-## Installation
+For example, switching to the "Agile" tariff during the same time period on the dashboard above will provide us with 
+a different cost readout.
+![screenshot of the electricity cost with a different tariff](images/grafana-example-agile.png)
 
-To run locally, get a recent Python 3 (e.g. v3.10) and pip, optionally setup a virtualenv, and run:
-```shell
-pip3 install -r src/requirements.txt
-```
-
-Alternatively you can build your own Docker image with the [Dockerfile](src/Dockerfile), or use Docker Compose based on the [example configuration](docker-compose.example.yml).
-
-## Configuration and usage
-
-First, create your own `config.yaml` file based on the [provided example](src/config.example.yaml) which explains (in comments) how to get the information you need.
-
-Once ready, you can simply run:
+## Installation and Running
+This fork focuses on running the application with Docker.
+- docker-compose
+- Docker run
+- Unraid Docker template
 
 ```shell
-python3 ./octo2influx.py
+docker run -d --name='octo2influx' -e 'FREQ'='1h' -v '/mnt/user/appdata/octo2influx':'/etc/octo2influx/':'rw' --restart=unless-stopped 'ghcr.io/echoblag/octo2influx:latest'
 ```
-> [!NOTE]
-> Octopus typically makes your usage data available the next day.
 
-The utility has flexible command line parameters and a nice help too:
+The image has been extended in a few small areas to make it easier to update and setting file permissions.
 
+> The application can be run as a standalone Python process using `python3 ./octo2influx.py`
+
+### Data Availability
+Octopus typically makes your usage data available the next day.
+> If you have recently had smart meters installed, it can take a few days for consumption data to start coming in.
+
+## Configuration
+First, create your own `config.yaml` file using the [example](src/config.example.yaml) as a starting point.
+how to get the information you need.
+
+The priority of configuration options from highest to lowest is:
+1. Environment variables
+2. Command line flags
+3. Config file
+
+> The help section provides all the CLI flags and their equivalent environment variables. 
+
+> The settings can be declared in the config file `config.yaml` located in `/etc/octo2influx`.
+
+The application has a flexible command line parameters with a detailed help section:
 ```
 python3 ./octo2influx.py --help
 usage: octo2influx [-h] [--from_max_days_ago FROM_MAX_DAYS_AGO] [--from_days_ago FROM_DAYS_AGO] [--to_days_ago TO_DAYS_AGO] [--loglevel LOGLEVEL] [--timezone TIMEZONE]
@@ -76,23 +95,14 @@ options:
                         URL of the InfluxDB 2.X instance to store the data into (e.g. "http://localhost:8086")
   --influx_api_token INFLUX_API_TOKEN
                         (**Config file or environment only**) The API Token to connect to the InfluxDB 2.x instance.
-
-IMPORTANT NOTE: you should *not* define secrets and API tokens on the command
-line, as it is unsecure (e.g. it may stay in your shell history, appear in
-system audit logs, etc): you can define in an access-restricted configuration
-file instead.
-
-The settings can also be set in the config file config.yaml (in
-/etc/octo2influx, ~/.config/octo2influx, or the directory defined by the env var
-octo2influxDIR), or via environment variable of the form
-octo2influx_COMMAND_LINE_ARG.
-The priority from highest to lowest is: environment, command line, config file.
 ```
 
-## Acknowledgement
+## Acknowledgements
 This is a fork of the https://github.com/yo8192/octo2influx project that integrates GitHub Actions to build images as well as 
 dependency management.
 
-This project was originally based on https://github.com/stevenewey/octograph/ which I used and found very useful: thanks @stevenewey. 
+### Pre-fork
+The [yo8192's octo2influx](https://github.com/yo8192/octo2influx) project is originally based on https://github.com/stevenewey/octograph/.
 
-When I got Solar Panels I ended up largely rewritting it to be based on InfluxDB v2 and the Influx query language, cover the electricty export too with a more advanced Grafana dashboard.
+The motivation for the rewrite came following a solar installation, the project was largely rewritten to use 
+InfluxDB v2 and the Influx query language, factoring in electricity export and an updated Grafana dashboard.

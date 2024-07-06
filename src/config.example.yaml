@@ -23,38 +23,39 @@ octopus_api_key: "my_octopus_api_key"
 # Usage (consumption/import/export) to retrieve from Octopus
 #
 # How to:
-# - find your meter serial number, meter point (MPAN or MPRN):
+# - Find your meter serial number, meter point (MPAN or MPRN):
 #   see your Octopus invoices, or your account on Octopus's website
-# - find the unit: it is kWh for electricity. For gas, go to your account
+# - Find the unit: it is kWh for electricity. For gas, go to your account
 #   on the Octopus Website -> Explore My Energy Use -> Download your smart data for Gas,
 #   and check the unit in the header of the CSV file.
 usage:
   - energy_type: "electricity"
     direction: "import"
-    meter_point: "mpan"
+    meter_point: "MPAN"
     meter_serial: "serial_number"
     unit: "kWh"
   - energy_type: "electricity"
     direction: "export"
-    meter_point: "mpan"
+    meter_point: "MPAN"
     meter_serial: "serial_number"
     unit: "kWh"
   - energy_type: "gas"
     direction: "import"
-    meter_point: "mprn"
+    meter_point: "MPRN"
     meter_serial: "serial_number"
     # Note: Octopus gives m^3 for SMETS v2 meters, kWh for SMETS v1 ones
     unit: "m3"
 
-# Tariffs to retrieve from Octopus
+# Retrieve tariff data using the Octopus API
 #
-# How to (replace the curly-brackets):
+# How to:
 # - Find which GSP (grid-supply-point, i.e. geographical zone) you are in:
-# $ curl -u "{yourOctopusApiKey}:" https://api.octopus.energy/v1/electricity-meter-points/{MPAN}/ | jq
+#     curl -u "{yourOctopusApiKey}:" https://api.octopus.energy/v1/electricity-meter-points/{MPAN}/ | jq
 # - Find your product:
-# $ curl -u "{yourOctopusApiKey}:" https://api.octopus.energy/v1/products/ | jq '.results[] | .code + " " + .full_name'  | less
+#     curl -u "{yourOctopusApiKey}:" https://api.octopus.energy/v1/products/ | jq '.results[] | .code + " " + .full_name'  | less
 # - Find the full name, display name, and description of the product (and URLs etc):
-# $ curl -u "{yourOctopusApiKey}:" https://api.octopus.energy/v1/products/{OCTOPUS-PRODUCT-CODE}/ | jq  | less
+#     curl -u "{yourOctopusApiKey}:" https://api.octopus.energy/v1/products/{OCTOPUS-PRODUCT-CODE}/ | jq  | less
+
 tariffs:
   - energy_type: "electricity"
     direction: "export"
@@ -127,11 +128,12 @@ tariffs:
     description: "This tariff features 100% renewable electricity and fixes your unit rates and standing charge for 12 months. This tariff has £75/fuel exit fees."
     tariff_code: "G-1R-LOYAL-FIX-12M-23-07-25-C"
 
+# INFO, DEBUG, WARNING, ERROR
 loglevel: INFO
 
 # Various settings you are unlikely to need changing:
 timezone: "Europe/London"
-# Timespan to retrieve data for. 0 means today.
+# Timespan to retrieve data for, 0 means today.
 from_max_days_ago: 60
 to_days_ago: 0
 base_url: "https://api.octopus.energy/v1"
