@@ -1,47 +1,61 @@
 # octo2influx - Fork
-Download your Octopus Energy usage, import and export (if you have solar panels) tariff data into your
+This is my fork of [yo8192's octo2influx](https://github.com/yo8192/octo2influx) project.
+
+My reasons for forking the project are:
+- I use Unraid as my Docker environment, which has its own peculiarities and does not run docker-compose natively.
+- I like versioning images and making them available for distribution.
+- It gives me another reason to play with GitHub actions.
+
+The octo2influx tool enables users to download their Octopus Energy usage, including import and export data.
+The latter is for solar equipped properties that export energy back to the grid.
+
 [InfluxDB](https://www.influxdata.com/products/influxdb-overview/) v2 database and display in [Grafana](https://grafana.com/).
 
-## Referral
-If you are interested in this and would like to join Octopus, why not use my [referral link](https://share.octopus.energy/amber-birch-257)?
-This will give you and me [£50 each](https://octopus.energy/help-and-faqs/articles/i-have-a-question-about-octopus-pound50-referrals/).
-
 ## About
-octo2influx retrieves your usage data and the tariffs you configure from the [Octopus API](https://developer.octopus.energy/docs/api/).
-This can then be displayed with the advanced Grafana dashboard: ![screenshot of the Grafana dashboard](images/grafana-dashboard-overview.png)
+octo2influx retrieves energy usage data and the tariffs using the [Octopus API](https://developer.octopus.energy/docs/api/).
 
-It automatically calculates the cost based on the tariff, and you can switch between tariffs to compare costs. For instance, 
-switching to the 'Agile' tariff on the same time period of the dashboard above gives us a different cost: 
+The tool calculates the cost based on the tariff. You can switch between tariffs to compare costs.
+>Additional tariffs need to be configured to compare prices.
+
+In my case, I have only configured the current active tariff and will add more as needed or when I change to a new one.
+
+For example, switching to the "Agile" tariff during the same time period on the dashboard above will provide us with 
+a different cost readout.
 ![screenshot of the electricity cost with a different tariff](images/grafana-example-agile.png)
 
-## Installation
+## Installation and Running
 This fork focuses on running the application with Docker.
-- Through docker-compose
+- docker-compose
 - Docker run
-
+- Unraid Docker template
 
 ```shell
-docker run -d --name='octo2influx' -e 'FREQ'='1h' -v '/mnt/user/appdata/octo2influx':'/etc/octo2influx/':'rw' --restart=unless-stopped 'ghcr.io/echoblag/octo2influx:70a578b'
+docker run -d --name='octo2influx' -e 'FREQ'='1h' -v '/mnt/user/appdata/octo2influx':'/etc/octo2influx/':'rw' --restart=unless-stopped 'ghcr.io/echoblag/octo2influx:latest'
 ```
 
-The image has been extended in a few small areas to make it easier to update and setting the file permissions.
+The image has been extended in a few small areas to make it easier to update and setting file permissions.
 
+> The application can be run as a standalone Python process using `python3 ./octo2influx.py`
 
+### Data Availability
+Octopus typically makes your usage data available the next day.
+> If you have recently had smart meters installed, it can take a few days for consumption data to start coming in.
 
-
-> The application can be run as standalone Python process.
-
-## Configuration and usage
-First, create your own `config.yaml` file based on the [provided example](src/config.example.yaml) which explains (in comments)
+## Configuration
+First, create your own `config.yaml` file using the [example](src/config.example.yaml) as a starting point.
 how to get the information you need.
 
-> [!NOTE]
-> Octopus typically makes your usage data available the next day.
-> If you have recently had smart meters installed it can take a few days for consumption data to start coming in.
+The priority of configuration options from highest to lowest is:
+1. Environment variables
+2. Command line flags
+3. Config file
 
-The utility has flexible command line parameters with a detailed help section:
+> The help section provides all the CLI flags and their equivalent environment variables. 
 
-```shell
+> The settings can be declared in the config file `config.yaml` located in `/etc/octo2influx`.
+
+The application has a flexible command line parameters with a detailed help section:
+```
 python3 ./octo2influx.py --help
 usage: octo2influx [-h] [--from_max_days_ago FROM_MAX_DAYS_AGO] [--from_days_ago FROM_DAYS_AGO] [--to_days_ago TO_DAYS_AGO] [--loglevel LOGLEVEL] [--timezone TIMEZONE]
                    [--base_url BASE_URL] [--octopus_api_key OCTOPUS_API_KEY] [--price_types PRICE_TYPES] [--usage USAGE] [--tariffs TARIFFS] [--influx_org INFLUX_ORG]
@@ -82,18 +96,13 @@ options:
   --influx_api_token INFLUX_API_TOKEN
                         (**Config file or environment only**) The API Token to connect to the InfluxDB 2.x instance.
 ```
-The settings can also be set in the config file config.yaml (in
-/etc/octo2influx, ~/.config/octo2influx, or the directory defined by the env var
-octo2influxDIR), or via environment variable of the form
-octo2influx_COMMAND_LINE_ARG.
-The priority from highest to lowest is: environment, command line, config file.
 
 ## Acknowledgements
 This is a fork of the https://github.com/yo8192/octo2influx project that integrates GitHub Actions to build images as well as 
 dependency management.
 
 ### Pre-fork
-Which was originally based on https://github.com/stevenewey/octograph/.
+The [yo8192's octo2influx](https://github.com/yo8192/octo2influx) project is originally based on https://github.com/stevenewey/octograph/.
 
-Following a solar installation the project was largely rewritten to use InfluxDB v2 and the Influx query language, cover the 
-electricity export too with a more advanced Grafana dashboard.
+The motivation for the rewrite came following a solar installation, the project was largely rewritten to use 
+InfluxDB v2 and the Influx query language, factoring in electricity export and an updated Grafana dashboard.
