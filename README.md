@@ -1,11 +1,6 @@
 # octo2influx - Fork
 This is my fork of [yo8192's octo2influx](https://github.com/yo8192/octo2influx) project.
 
-**Breaking changes**
-> A bug Grafana version `11.1` breaks the Flux queries used for tariff pricing. 
-> - I recommend using `grafana/grafana:11.0.1` until the following issue is fixed.
-> - https://github.com/grafana/grafana/issues/89948
-
 My reasons for forking the project are:
 - I use Unraid as my Docker environment, which has its own peculiarities and does not run docker-compose natively.
 - I like versioning images and making them available for distribution.
