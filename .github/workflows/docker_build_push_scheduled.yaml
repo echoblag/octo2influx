@@ -1,0 +1,30 @@
+name: Python Docker Build and Push
+on:
+  schedule:
+    - cron: "0 0 * * 6"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to GHCR and push image
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Extract short commit hash
+        run: echo "COMMIT_HASH=$(git rev-parse --short=7 HEAD)" >> $GITHUB_ENV
+
+      - name: Push Docker image
+        run: docker buildx build --file ./src/Dockerfile --platform linux/amd64 --push --tag ghcr.io/echoblag/octo2influx:${{ env.COMMIT_HASH }} --tag ghcr.io/echoblag/octo2influx:latest ./src
+
+
+
