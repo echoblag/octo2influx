@@ -100,6 +100,17 @@ options:
                         URL of the InfluxDB 2.X instance to store the data into (e.g. "http://localhost:8086")
   --influx_api_token INFLUX_API_TOKEN
                         (**Config file or environment only**) The API Token to connect to the InfluxDB 2.x instance.
+
+IMPORTANT NOTE: you should *not* define secrets and API tokens on the command
+line, as it is unsecure (e.g. it may stay in your shell history, appear in
+system audit logs, etc): you can define in an access-restricted configuration
+file instead.
+
+The settings can also be set in the config file config.yaml (in
+/etc/octo2influx, ~/.config/octo2influx, or the directory defined by the env var
+octo2influxDIR), or via environment variable of the form
+octo2influx_COMMAND_LINE_ARG.
+The priority from highest to lowest is: environment, command line, config file.
 ```
 
 ## Acknowledgements
