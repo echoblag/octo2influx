@@ -1,5 +1,5 @@
 # octo2influx - Fork
-This is my fork of [yo8192's octo2influx](https://github.com/yo8192/octo2influx) project.
+This is a fork of [yo8192's octo2influx](https://github.com/yo8192/octo2influx) project.
 
 My reasons for forking the project are:
 - I use Unraid as my Docker environment, which has its own peculiarities and does not run docker-compose natively.
